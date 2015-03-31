@@ -1,0 +1,18 @@
+parameters:
+  ite_cron.manager.class: ITE\CronBundle\Cron\CronManager
+  ite_cron.cache_warmer.class: ITE\CronBundle\CacheWarmer\CronListenerCacheWarmer
+  ite_cron.file_loader.class: ITE\CronBundle\Loader\FileLoader
+
+services:
+  ite_cron.manager:
+    class: %ite_cron.manager.class%
+    arguments: [@ite_cron.file_loader, %kernel.cache_dir%]
+
+  ite_cron.cache_warmer:
+    class: %ite_cron.cache_warmer.class%
+    arguments: [@kernel]
+    tags: [{ name: kernel.cache_warmer }]
+
+  ite_cron.file_loader:
+    class: %ite_cron.file_loader.class%
+    arguments: [@file_locator]
