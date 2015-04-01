@@ -10,9 +10,17 @@ services:
 
   ite_cron.cache_warmer:
     class: %ite_cron.cache_warmer.class%
-    arguments: [@kernel]
+    arguments: [@ite_cron.manager]
     tags: [{ name: kernel.cache_warmer }]
 
   ite_cron.file_loader:
     class: %ite_cron.file_loader.class%
     arguments: [@file_locator]
+
+  ite_cron.command_reference:
+    class: ITE\CronBundle\Cron\Reference\CommandReference
+    factory: [ITE\CronBundle\Cron\Reference\ReferenceFactory, createCommandReference]
+
+  ite_cron.listener_reference:
+    class: ITE\CronBundle\Cron\Reference\ListenerReference
+    factory: [ITE\CronBundle\Cron\Reference\ReferenceFactory, createListenerReference]

@@ -8,8 +8,11 @@
 
 namespace ITE\CronBundle\CacheWarmer;
 
+use Cron\Schedule\CrontabSchedule;
 use Doctrine\Common\Annotations\AnnotationReader;
 use ITE\CronBundle\Annotation\CronCommand;
+use ITE\CronBundle\Cron\CronManager;
+use ITE\CronBundle\Cron\Reference\CommandReference;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
@@ -22,45 +25,19 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class CronListenerCacheWarmer implements CacheWarmerInterface
 {
-    const LISTENER_TYPE_SERVICE = 1;
-    const LISTENER_TYPE_COMMAND = 2;
-    /**
-     * @var array
-     */
-    private $listeners = [];
+
+    const CACHE_DIR_SUFFIX = '/ite_cron/';
 
     /**
-     * @var KernelInterface
+     * @var CronManager
      */
-    private $kernel;
+    protected $cronManager;
 
-    /**
-     * @param $kernel
-     */
-    public function __construct($kernel)
+    public function __construct(CronManager $cronManager)
     {
-        $this->kernel = $kernel;
+        $this->cronManager = $cronManager;
     }
 
-
-    /**
-     * Add listener to warmUp
-     *
-     * @param      $type
-     * @param      $cronPattern
-     * @param      $service
-     * @param null $method
-     * @param int  $priority
-     */
-    public function addListener($type, $cronPattern, $service, $method = null, $priority = 0)
-    {
-        $this->listeners[$cronPattern] = [
-            'type'     => $type,
-            'service'  => $service,
-            'method'   => $method,
-            'priority' => $priority,
-        ];
-    }
 
     /**
      * Checks whether this warmer is optional or not.
@@ -79,56 +56,22 @@ class CronListenerCacheWarmer implements CacheWarmerInterface
 
     public function warmUp($cacheDir)
     {
-        $this->loadCommandListeners();
 
         $fileSystem = new Filesystem();
-        $fileSystem->mkdir($cacheDir.'/ite_cron');
+        $fileSystem->mkdir($cacheDir.self::CACHE_DIR_SUFFIX);
 
-        $fileSystem->dumpFile($cacheDir.'/ite_cron/cron_listeners.meta', serialize($this->listeners));
-    }
+        $listeners = $this->cronManager->getListeners();
 
-    /**
-     * Load commands, annotated as CronCommands.
-     */
-    protected function loadCommandListeners()
-    {
-        $reader = new AnnotationReader();
-
-        foreach ($this->kernel->getBundles() as $bundle) {
-
-            if (!is_dir($dir = $bundle->getPath().'/Command')) {
-                return;
-            }
-
-            $finder = new Finder();
-            $finder->files()->name('*Command.php')->in($dir);
-
-            $prefix = $bundle->getNamespace().'\\Command';
-
-            foreach ($finder as $file) {
-                $ns = $prefix;
-                if ($relativePath = $file->getRelativePath()) {
-                    $ns .= '\\'.strtr($relativePath, '/', '\\');
-                }
-                $class = $ns.'\\'.$file->getBasename('.php');
-                $r     = new \ReflectionClass($class);
-                if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract(
-                    ) && !$r->getConstructor()->getNumberOfRequiredParameters()
-                ) {
-                    /** @var CronCommand $annotation */
-                    if ($annotation = $reader->getClassAnnotation($r, 'ITE\CronBundle\Annotation\CronCommand')) {
-                        $this->addListener(
-                            self::LISTENER_TYPE_COMMAND,
-                            $annotation->pattern,
-                            $r->newInstance()->getName(),
-                            null,
-                            $annotation->priority
-                        );
-                    }
-
-                }
-            }
+        foreach ($listeners as $listener) {
+            $listener->save();
         }
+
+        $commands = $this->cronManager->getCommands();
+
+        foreach ($commands as $command) {
+            $command->save();
+        }
+
     }
 
 }
