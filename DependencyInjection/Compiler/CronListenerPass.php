@@ -30,16 +30,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class CronListenerPass implements CompilerPassInterface
 {
-    /**
-     * @var Kernel
-     */
-    protected $kernel;
-
-    public function __construct($kernel)
-    {
-        $this->kernel = $kernel;
-    }
-
 
     /**
      * You can modify the container here before it is dumped to PHP code.
@@ -108,18 +98,21 @@ class CronListenerPass implements CompilerPassInterface
     protected function addCommandListeners(ContainerBuilder $container, $cachePath, Definition $definition)
     {
         $reader = new AnnotationReader();
-        $bundles = $this->kernel->getBundles();
+        $bundles = $container->getParameter('kernel.bundles');
 
-        foreach ($bundles as $bundle) {
+        foreach ($bundles as $name => $bundle) {
 
-            if (!is_dir($dir = $bundle->getPath().'/Command')) {
+            $reflected = new \ReflectionClass($bundle);
+            $dir = dirname($reflected->getFileName()).'/Command';
+            if (!is_dir($dir)) {
                 continue;
             }
 
             $finder = new Finder();
             $finder->files()->name('*Command.php')->in($dir);
 
-            $prefix = $bundle->getNamespace().'\\Command';
+            $bundle = implode('\\', array_slice(explode('\\', $bundle), 0, -1));
+            $prefix = $bundle.'\\Command';
 
             foreach ($finder as $file) {
                 $ns = $prefix;

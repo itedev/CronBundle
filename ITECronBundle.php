@@ -9,22 +9,11 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class ITECronBundle extends Bundle
 {
-
-    /**
-     * @var Kernel
-     */
-    private $kernel;
-
-    function __construct(Kernel $kernel)
-    {
-        $this->kernel = $kernel;
-    }
-
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
 
-        $container->addCompilerPass(new CronListenerPass($this->kernel));
+        $container->addCompilerPass(new CronListenerPass());
     }
 
 }
