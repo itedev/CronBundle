@@ -73,21 +73,21 @@ class ITECronExtension extends Extension
             $definition = $container->getDefinition('ite_cron.manager');
             $cachePath  = $container->getParameter('kernel.cache_dir').CronListenerCacheWarmer::CACHE_DIR_SUFFIX;
 
-            foreach ($config['listeners'] as $listener) {
+            foreach ($config['commands'] as $command) {
                 $referenceDefinition = $container->getDefinition('ite_cron.command_reference');
 
                 $referenceDefinition->setArguments(
                     [
                         $cachePath.CacheNameUtil::getCacheNameForCommand(
-                            $listener['pattern'],
-                            $listener['name'],
-                            $listener['parameters'],
-                            $listener['priority']
+                            $command['pattern'],
+                            $command['name'],
+                            $command['arguments'],
+                            $command['priority']
                         ),
-                        $listener['name'],
-                        $listener['parameters'],
-                        $listener['pattern'],
-                        $listener['priority']
+                        $command['name'],
+                        $command['arguments'],
+                        $command['pattern'],
+                        $command['priority']
                     ]
                 );
 

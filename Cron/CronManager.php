@@ -172,7 +172,7 @@ class CronManager
     protected function callCommand(Application $application, OutputInterface $output, CommandReference $reference)
     {
         $command = $application->get($reference->getName());
-        $input   = new StringInput($reference->getParameters());
+        $input   = new StringInput($reference->getArguments());
 
         $command->run($input, $output);
     }

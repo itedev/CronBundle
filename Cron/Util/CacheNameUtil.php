@@ -35,12 +35,13 @@ class CacheNameUtil
      *
      * @param $pattern
      * @param $command
+     * @param $arguments
      * @param $priority
      * @return string
      */
-    public static function getCacheNameForCommand($pattern, $command, $priority)
+    public static function getCacheNameForCommand($pattern, $command, $arguments, $priority)
     {
-        return 'cron_command_'.md5(serialize([$pattern, $command, $priority])).'.meta';
+        return 'cron_command_'.md5(serialize([$pattern, $command, $arguments, $priority])).'.meta';
     }
 
 }

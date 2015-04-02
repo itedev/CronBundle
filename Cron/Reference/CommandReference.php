@@ -24,19 +24,19 @@ class CommandReference extends CachedReference
     /**
      * @var string
      */
-    private $parameters;
+    private $arguments;
 
     /**
      * @param null   $resourcePath
      * @param string $name
-     * @param string $parameters
+     * @param string $arguments
      * @param null   $schedule
      * @param int    $priority
      */
-    public function __construct($resourcePath, $name, $parameters = '', $schedule = null, $priority = 0)
+    public function __construct($resourcePath, $name, $arguments = '', $schedule = null, $priority = 0)
     {
         $this->name = $name;
-        $this->parameters = $parameters;
+        $this->arguments = $arguments;
         $this->schedule = $schedule;
         $this->priority = $priority;
 
@@ -54,8 +54,8 @@ class CommandReference extends CachedReference
     /**
      * @return string
      */
-    public function getParameters()
+    public function getArguments()
     {
-        return $this->parameters;
+        return $this->arguments;
     }
 }
