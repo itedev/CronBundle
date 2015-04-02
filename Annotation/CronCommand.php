@@ -25,4 +25,9 @@ class CronCommand
      * @var int
      */
     public $priority = 0;
+
+    /**
+     * @var string
+     */
+    public $parameters = '';
 }

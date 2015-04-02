@@ -20,6 +20,31 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_cron');
 
+        $rootNode
+            ->children()
+                ->arrayNode('commands')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('command')->cannotBeEmpty()->end()
+                            ->scalarNode('arguments')->end()
+                            ->scalarNode('pattern')->cannotBeEmpty()->end()
+                            ->scalarNode('priority')->defaultValue(0)->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('listeners')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('service')->cannotBeEmpty()->end()
+                            ->scalarNode('method')->cannotBeEmpty()->end()
+                            ->scalarNode('pattern')->cannotBeEmpty()->end()
+                            ->scalarNode('priority')->defaultValue(0)->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.

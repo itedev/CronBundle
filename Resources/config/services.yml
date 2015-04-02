@@ -2,6 +2,9 @@ parameters:
   ite_cron.manager.class: ITE\CronBundle\Cron\CronManager
   ite_cron.cache_warmer.class: ITE\CronBundle\CacheWarmer\CronListenerCacheWarmer
   ite_cron.file_loader.class: ITE\CronBundle\Loader\FileLoader
+  ite_cron.command_reference.class: ITE\CronBundle\Cron\Reference\CommandReference
+  ite_cron.listener_reference.class: ITE\CronBundle\Cron\Reference\ListenerReference
+  ite_cron.reference_factory.class: ITE\CronBundle\Cron\Reference\ReferenceFactory
 
 services:
   ite_cron.manager:
@@ -18,9 +21,9 @@ services:
     arguments: [@file_locator]
 
   ite_cron.command_reference:
-    class: ITE\CronBundle\Cron\Reference\CommandReference
-    factory: [ITE\CronBundle\Cron\Reference\ReferenceFactory, createCommandReference]
+    class: %ite_cron.command_reference.class%
+    factory: [%ite_cron.reference_factory.class%, createCommandReference]
 
   ite_cron.listener_reference:
-    class: ITE\CronBundle\Cron\Reference\ListenerReference
-    factory: [ITE\CronBundle\Cron\Reference\ReferenceFactory, createListenerReference]
+    class: %ite_cron.listener_reference.class%
+    factory: [%ite_cron.reference_factory.class%, createListenerReference]

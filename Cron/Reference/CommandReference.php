@@ -9,8 +9,6 @@
 namespace ITE\CronBundle\Cron\Reference;
 
 
-use Cron\Schedule\CrontabSchedule;
-
 /**
  * Class CommandReference
  *
@@ -24,14 +22,21 @@ class CommandReference extends CachedReference
     private $name;
 
     /**
+     * @var string
+     */
+    private $parameters;
+
+    /**
      * @param null   $resourcePath
      * @param string $name
+     * @param string $parameters
      * @param null   $schedule
      * @param int    $priority
      */
-    public function __construct($resourcePath, $name, $schedule = null, $priority = 0)
+    public function __construct($resourcePath, $name, $parameters = '', $schedule = null, $priority = 0)
     {
         $this->name = $name;
+        $this->parameters = $parameters;
         $this->schedule = $schedule;
         $this->priority = $priority;
 
@@ -44,5 +49,13 @@ class CommandReference extends CachedReference
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
     }
 }

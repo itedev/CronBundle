@@ -9,19 +9,15 @@
 namespace ITE\CronBundle\DependencyInjection\Compiler;
 
 
-use Cron\Schedule\CrontabSchedule;
-use Doctrine\Common\Annotations\AnnotationReader;
+use ITE\Common\Annotation\Finder;
 use ITE\CronBundle\Annotation\CronCommand;
 use ITE\CronBundle\CacheWarmer\CronListenerCacheWarmer;
-use ITE\CronBundle\Cron\Reference\ListenerReference;
 use ITE\CronBundle\Cron\Util\CacheNameUtil;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Class CronListenerPass
@@ -49,6 +45,7 @@ class CronListenerPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('ite_cron.listener');
 
         $cachePath = $container->getParameter('kernel.cache_dir').CronListenerCacheWarmer::CACHE_DIR_SUFFIX;
+
         foreach ($taggedServices as $id => $tagAttributes) {
             foreach ($tagAttributes as $attributes) {
                 $priority = isset($tagAttributes['priority']) ? $tagAttributes['priority'] : 0;
@@ -97,8 +94,8 @@ class CronListenerPass implements CompilerPassInterface
      */
     protected function addCommandListeners(ContainerBuilder $container, $cachePath, Definition $definition)
     {
-        $reader = new AnnotationReader();
         $bundles = $container->getParameter('kernel.bundles');
+        $finder = new Finder();
 
         foreach ($bundles as $name => $bundle) {
 
@@ -108,43 +105,31 @@ class CronListenerPass implements CompilerPassInterface
                 continue;
             }
 
-            $finder = new Finder();
-            $finder->files()->name('*Command.php')->in($dir);
+            $annotationsMetadata = $finder->findAnnotationsInDir($dir);
 
-            $bundle = implode('\\', array_slice(explode('\\', $bundle), 0, -1));
-            $prefix = $bundle.'\\Command';
+            foreach ($annotationsMetadata as $metadata) {
 
-            foreach ($finder as $file) {
-                $ns = $prefix;
-                if ($relativePath = $file->getRelativePath()) {
-                    $ns .= '\\'.strtr($relativePath, '/', '\\');
-                }
-                $class = $ns.'\\'.$file->getBasename('.php');
-                $r     = new \ReflectionClass($class);
-                if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract(
-                    ) && !$r->getConstructor()->getNumberOfRequiredParameters()
-                ) {
-                    /** @var CronCommand $annotation */
-                    if ($annotation = $reader->getClassAnnotation($r, 'ITE\CronBundle\Annotation\CronCommand')) {
-                        $referenceDefinition = $container->getDefinition('ite_cron.command_reference');
-                        $name = $r->newInstance()->getName();
+                /** @var CronCommand $annotation */
+                if ($annotation = $metadata->getClassAnnotation('ITE\CronBundle\Annotation\CronCommand')) {
+                    $referenceDefinition = $container->getDefinition('ite_cron.command_reference');
+                    $name                = $metadata->getReflected()->newInstance()->getName();
 
-                        $referenceDefinition->setArguments(
-                            [
-                                $cachePath.CacheNameUtil::getCacheNameForCommand(
-                                    $annotation->pattern,
-                                    $name,
-                                    $annotation->priority
-                                ),
-                                $name,
+                    $referenceDefinition->setArguments(
+                        [
+                            $cachePath.CacheNameUtil::getCacheNameForCommand(
                                 $annotation->pattern,
+                                $name,
+                                $annotation->parameters,
                                 $annotation->priority
-                            ]
-                        );
+                            ),
+                            $name,
+                            $annotation->parameters,
+                            $annotation->pattern,
+                            $annotation->priority
+                        ]
+                    );
 
-                        $definition->addMethodCall('addCommand', [$referenceDefinition]);
-                    }
-
+                    $definition->addMethodCall('addCommand', [$referenceDefinition]);
                 }
             }
         }

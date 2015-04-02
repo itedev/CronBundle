@@ -8,15 +8,9 @@
 
 namespace ITE\CronBundle\CacheWarmer;
 
-use Cron\Schedule\CrontabSchedule;
-use Doctrine\Common\Annotations\AnnotationReader;
-use ITE\CronBundle\Annotation\CronCommand;
 use ITE\CronBundle\Cron\CronManager;
-use ITE\CronBundle\Cron\Reference\CommandReference;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class CronListenerCacheWarmer

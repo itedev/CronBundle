@@ -9,7 +9,6 @@
 namespace ITE\CronBundle\Cron;
 
 
-use Cron\Schedule\CrontabSchedule;
 use ITE\CronBundle\Cron\Reference\CommandReference;
 use ITE\CronBundle\Cron\Reference\ListenerReference;
 use ITE\CronBundle\Cron\Reference\ReferenceInterface;
@@ -17,6 +16,7 @@ use ITE\CronBundle\Event\CronEvent;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CronManager
@@ -80,33 +80,40 @@ class CronManager
      */
     public function runCron(Application $application, InputInterface $input, OutputInterface $output)
     {
-        $this->sortReferences($this->commands);
-        $this->sortReferences($this->listeners);
+        /** @var ReferenceInterface[] $references */
+        $references = array_merge($this->listeners, $this->commands);
+        $this->sortReferences($references);
 
         $now = new \DateTime();
 
-        $output->writeln('Start of running commands.');
+        $output->writeln('Start of running cron.');
 
-        foreach ($this->listeners as $listener) {
-            if ($listener->getSchedule()->valid($now)) {
-                $output->writeln(
-                    sprintf('Running "%s:%s" listener', get_class($listener->getService()), $listener->getMethod())
-                );
-                $this->callListener($listener, $input, $output);
-                $output->writeln('Done.');
+        foreach ($references as $reference) {
+            if ($reference->getSchedule()->valid($now)) {
+
+                if ($reference instanceof ListenerReference) {
+                    $output->writeln(
+                        sprintf(
+                            'Running "%s:%s" listener',
+                            get_class($reference->getService()),
+                            $reference->getMethod()
+                        )
+                    );
+
+                    $this->callListener($reference, $input, $output);
+
+                    $output->writeln('Done.');
+                } elseif ($reference instanceof CommandReference) {
+                    $output->writeln(
+                        sprintf('Running "%s" command', $reference->getName())
+                    );
+
+                    $this->callCommand($application, $output, $reference);
+
+                    $output->writeln('Done.');
+                }
             }
         }
-
-        foreach ($this->commands as $command) {
-            if ($command->getSchedule()->valid($now)) {
-                $output->writeln(
-                    sprintf('Running "%s" command', $command->getName())
-                );
-                $this->callCommand($application, $input, $output, $command);
-                $output->writeln('Done.');
-            }
-        }
-
     }
 
     /**
@@ -158,18 +165,15 @@ class CronManager
      * Call command.
      *
      * @param Application      $application
-     * @param InputInterface   $input
      * @param OutputInterface  $output
      * @param CommandReference $reference
      * @throws \Exception
      */
-    protected function callCommand(
-        Application $application,
-        InputInterface $input,
-        OutputInterface $output,
-        CommandReference $reference
-    ) {
+    protected function callCommand(Application $application, OutputInterface $output, CommandReference $reference)
+    {
         $command = $application->get($reference->getName());
+        $input   = new StringInput($reference->getParameters());
+
         $command->run($input, $output);
     }
 }

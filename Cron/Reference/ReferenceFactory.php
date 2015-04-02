@@ -17,9 +17,9 @@ class ReferenceFactory
         return new ListenerReference($resourcePath, $service, $method, $schedule, $priority);
     }
 
-    public static function createCommandReference($resourcePath, $command, $schedule = null, $priority = 0)
+    public static function createCommandReference($resourcePath, $command, $parameters = '', $schedule = null, $priority = 0)
     {
-        return new CommandReference($resourcePath, $command, $schedule, $priority);
+        return new CommandReference($resourcePath, $command, $parameters, $schedule, $priority);
     }
 
 }
