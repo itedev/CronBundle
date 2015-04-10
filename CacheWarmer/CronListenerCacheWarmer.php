@@ -15,7 +15,6 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 /**
  * Class CronListenerCacheWarmer
  *
- * @package ITE\CronBundle\CacheWarmer
  */
 class CronListenerCacheWarmer implements CacheWarmerInterface
 {

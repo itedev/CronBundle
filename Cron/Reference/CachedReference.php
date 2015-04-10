@@ -13,7 +13,6 @@ use Cron\Schedule\CrontabSchedule;
 /**
  * Class CachedReference
  *
- * @package ITE\CronBundle\Cron\Reference
  */
 class CachedReference extends AbstractReference
 {

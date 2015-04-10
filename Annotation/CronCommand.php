@@ -11,7 +11,6 @@ namespace ITE\CronBundle\Annotation;
 /**
  * Class CronCommand
  *
- * @package ITE\CronBundle\Annotation
  * @Annotation()
  */
 class CronCommand

@@ -12,7 +12,6 @@ namespace ITE\CronBundle\Cron\Reference;
 /**
  * Class CommandReference
  *
- * @package ITE\CronBundle\Cron\Reference
  */
 class CommandReference extends CachedReference
 {

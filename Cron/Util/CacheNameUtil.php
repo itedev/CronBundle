@@ -11,7 +11,6 @@ namespace ITE\CronBundle\Cron\Util;
 /**
  * Class CacheNameUtil
  *
- * @package ITE\CronBundle\Cron\Util
  */
 class CacheNameUtil
 {

@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * Class CronListenerPass
  *
- * @package ITE\CronBundle\DependencyInjection\Compiler
  */
 class CronListenerPass implements CompilerPassInterface
 {

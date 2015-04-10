@@ -11,7 +11,6 @@ namespace ITE\CronBundle\Cron\Reference;
 /**
  * Class ListenerReference
  *
- * @package ITE\CronBundle\Cron\Reference
  */
 class ListenerReference extends CachedReference
 {
