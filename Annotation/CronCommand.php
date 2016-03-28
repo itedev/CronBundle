@@ -21,7 +21,7 @@ class CronCommand
     public $priority = 0;
 
     /**
-     * @var string
+     * @var array
      */
-    public $parameters = '';
+    public $parameters = [];
 }
