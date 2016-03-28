@@ -1,10 +1,4 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 01.04.2015
- * Time: 13:28
- */
 
 namespace ITE\CronBundle\Cron\Reference;
 
@@ -13,6 +7,7 @@ use Cron\Schedule\CrontabSchedule;
 /**
  * Class CachedReference
  *
+ * @author sam0delkin <t.samodelkin@gmail.com>
  */
 class CachedReference extends AbstractReference
 {

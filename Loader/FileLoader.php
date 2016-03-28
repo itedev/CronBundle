@@ -1,18 +1,16 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 31.03.2015
- * Time: 17:56
- */
 
 namespace ITE\CronBundle\Loader;
 
 use Symfony\Component\Config\Loader\FileLoader as BaseLoader;
 
-
-class FileLoader extends BaseLoader {
-
+/**
+ * Class FileLoader
+ *
+ * @author sam0delkin <t.samodelkin@gmail.com>
+ */
+class FileLoader extends BaseLoader 
+{
     /**
      * @param mixed $resource
      * @param null  $type

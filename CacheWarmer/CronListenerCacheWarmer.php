@@ -1,10 +1,4 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 31.03.2015
- * Time: 17:00
- */
 
 namespace ITE\CronBundle\CacheWarmer;
 
@@ -15,6 +9,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 /**
  * Class CronListenerCacheWarmer
  *
+ * @author sam0delkin <t.samodelkin@gmail.com>
  */
 class CronListenerCacheWarmer implements CacheWarmerInterface
 {

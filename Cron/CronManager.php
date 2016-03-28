@@ -1,13 +1,6 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 31.03.2015
- * Time: 16:58
- */
 
 namespace ITE\CronBundle\Cron;
-
 
 use ITE\CronBundle\Cron\Reference\CommandReference;
 use ITE\CronBundle\Cron\Reference\ListenerReference;
@@ -19,6 +12,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class CronManager
+ *
+ * @author sam0delkin <t.samodelkin@gmail.com>
+ */
 class CronManager
 {
     /**

@@ -1,20 +1,14 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 01.04.2015
- * Time: 13:43
- */
 
 namespace ITE\CronBundle\Cron\Util;
 
 /**
  * Class CacheNameUtil
  *
+ * @author sam0delkin <t.samodelkin@gmail.com>
  */
 class CacheNameUtil
 {
-
     /**
      * Returns cache filename for listener
      *
@@ -42,5 +36,5 @@ class CacheNameUtil
     {
         return 'cron_command_'.md5(serialize([$pattern, $command, $arguments, $priority])).'.meta';
     }
-
 }
+

@@ -1,15 +1,8 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 31.03.2015
- * Time: 16:57
- */
 
 namespace ITE\CronBundle\DependencyInjection\Compiler;
 
-
-use ITE\Common\Annotation\Finder;
+use ITE\Common\Annotation\AnnotationFinder;
 use ITE\CronBundle\Annotation\CronCommand;
 use ITE\CronBundle\CacheWarmer\CronListenerCacheWarmer;
 use ITE\CronBundle\Cron\Util\CacheNameUtil;
@@ -22,6 +15,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * Class CronListenerPass
  *
+ * @author sam0delkin <t.samodelkin@gmail.com>
  */
 class CronListenerPass implements CompilerPassInterface
 {
@@ -94,7 +88,7 @@ class CronListenerPass implements CompilerPassInterface
     protected function addCommandListeners(ContainerBuilder $container, $cachePath, Definition $definition)
     {
         $bundles = $container->getParameter('kernel.bundles');
-        $finder = new Finder();
+        $finder = new AnnotationFinder();
 
         foreach ($bundles as $name => $bundle) {
 
@@ -133,5 +127,4 @@ class CronListenerPass implements CompilerPassInterface
             }
         }
     }
-
 }

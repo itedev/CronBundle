@@ -1,14 +1,12 @@
 <?php
-/**
- * This file is created by sam0delkin (t.samodelkin@gmail.com).
- * IT-Excellence (http://itedev.com)
- * Date: 01.04.2015
- * Time: 13:46
- */
 
 namespace ITE\CronBundle\Cron\Reference;
 
-
+/**
+ * Class ReferenceFactory
+ *
+ * @author sam0delkin <t.samodelkin@gmail.com>
+ */
 class ReferenceFactory
 {
 
